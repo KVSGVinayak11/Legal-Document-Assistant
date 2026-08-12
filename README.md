@@ -55,7 +55,7 @@ The Legal Document Assistant uses a **Retrieval-Augmented Generation (RAG) workf
 
 ### RAG Architecture
 
-![RAG Flow](./images/llm%20rag%20flow.png)
+![RAG Flow](./images/rag1.png)
 
 ---
 
