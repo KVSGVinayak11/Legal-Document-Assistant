@@ -342,7 +342,7 @@ The project also records scores associated with the Hugging Face QA component to
 
 ## 📈 Monitoring with Grafana
 
-![Grafana Dashboard](./images/dashboard.png)
+![Grafana Dashboard](./images/grafana.png)
 
 Grafana is used to monitor both application usage and retrieval quality.
 
