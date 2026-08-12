@@ -566,10 +566,10 @@ The repository includes supporting visual assets used in this documentation:
 
 ```text
 images/
-├── llm rag flow.png
-├── llm.png
 ├── airflow.png
-└── dashboard.png
+├── grafana.png
+├── rag1.png
+└── streamlit.png
 ```
 
 The project also references:
