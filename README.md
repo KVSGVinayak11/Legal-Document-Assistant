@@ -292,7 +292,7 @@ Airflow provides workflow execution and failure monitoring.
 
 ## 🖥️ Streamlit Interface
 
-![Streamlit Interface](./images/llm.png)
+![Streamlit Interface](./images/streamlit.png)
 
 The Streamlit application provides a simple interface for legal research.
 
