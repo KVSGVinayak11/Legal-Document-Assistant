@@ -1,61 +1,222 @@
-# Background
+# ⚖️ Legal Document Assistant
 
-In today's legal industry, the sheer volume of legal documents, case laws, and statutes available can be overwhelming for lawyers and legal professionals. Efficiently managing and retrieving relevant legal information is crucial to building a strong case or providing timely advice to clients. However, the manual process of sifting through extensive documents can be time-consuming and prone to human error. The evolution of technology, particularly in artificial intelligence (AI) and natural language processing (NLP), has opened new avenues for enhancing legal research processes. By utilizing advanced AI models such as large language models (LLMs) and techniques like Retrieval-Augmented Generation (RAG), it is now possible to automate the retrieval of legal information with high accuracy and relevance.
+> An AI-powered legal research assistant that combines **Retrieval-Augmented Generation (RAG)**, **PostgreSQL**, **Elasticsearch**, **Apache Airflow**, **Hugging Face**, **Streamlit**, **Docker**, and **Grafana** to make legal document search faster, more relevant, and easier to monitor.
 
-# Problem Statement
+---
 
-Law firms and legal professionals face significant challenges in managing large collections of legal documents, case laws, and statutes. The manual process of searching for relevant information is not only time-consuming but also inefficient, as it may lead to missing critical information or wasting valuable resources on non-essential documents. Existing legal research tools often fail to provide contextually relevant suggestions or insights, limiting their usefulness in complex cases. The need for a system that can quickly, accurately, and contextually retrieve relevant legal documents is more pressing than ever.
+## 📌 Overview
 
-# Solution
+Legal professionals often need to search through large collections of case law, statutes, legal documents, and other reference material. Traditional keyword-based research can be slow and may make it difficult to identify the most relevant information quickly.
 
-The Legal Document Assistant aims to solve these challenges by implementing a Retrieval-Augmented Generation (RAG) approach, combined with a powerful large language model (LLM). This system allows law firms to efficiently query vast collections of legal documents and receive contextually accurate answer. By integrating LLM with a knowledge base, the application provides lawyers with instant access to relevant case laws, legal precedents, statutes, and other legal documents. The assistant can streamline legal research, reduce the time spent on manual searches, and ensure that critical information is not overlooked, ultimately improving the legal research process and enhancing decision-making capabilities.
+The **Legal Document Assistant** addresses this challenge with a retrieval-first architecture. Legal data is ingested through an automated Airflow pipeline, stored in PostgreSQL, indexed in Elasticsearch, and retrieved in response to user questions. The retrieved context is then passed to the language-processing component to produce a contextually relevant response.
 
+The application provides:
 
-## RAG Flow
+- 🔎 Fast legal document retrieval
+- 🤖 Context-aware question answering
+- 📚 Case-law and legal-text search
+- 🔄 Automated data ingestion and indexing
+- 📊 RAG evaluation using Hit Rate and MRR
+- 📈 Real-time application and quality monitoring
+- 🐳 Docker-based deployment
+- 🖥️ Interactive Streamlit interface
 
-![RAG FLOW](./images/llm%20rag%20flow.png)
+> **Important:** This project is intended as a legal research and information-retrieval aid. It does not replace professional legal advice, legal review, or verification against authoritative sources.
 
-### Dataset
+---
 
-- https://www.kaggle.com/datasets/umarbutler/open-australian-legal-qa/data?select=qa.jsonl
-- https://www.kaggle.com/datasets/amohankumar/legal-text-classification-dataset
+## 🎯 Problem Statement
 
-### Tech Stack
+Legal organizations work with large and continuously growing collections of documents. Manually searching these collections can be:
 
-The Legal Document Assistant leverages a combination of cutting-edge technologies and tools to provide an efficient and scalable solution for legal document management and retrieval. Below is an overview of the key components of the tech stack:
+- Time-consuming
+- Difficult to scale
+- Sensitive to query wording
+- Prone to overlooking relevant information
+- Inefficient when multiple documents must be compared
 
-- Python: The core language used for developing the application, enabling seamless integration of machine learning models, data processing, and backend services.
-- Streamlit: A lightweight web framework used to create an intuitive and interactive user interface (UI) for the Legal Document Assistant. Streamlit allows lawyers and legal professionals to interact with the system effortlessly, providing a seamless experience for querying documents and retrieving legal information.
-- Airflow: A powerful orchestration tool used to manage and schedule workflows, ensuring that data ingestion, processing, and retrieval tasks are automated and run efficiently.
-- Elasticsearch: A distributed search engine used to index and query large collections of legal documents. Elasticsearch allows for fast and efficient full-text search, ensuring that relevant case laws, statutes, and legal documents can be retrieved quickly.
-- Google BERT LLM Model: The Google BERT (Bidirectional Encoder Representations from Transformers) model is employed to enhance the retrieval-augmented generation (RAG) flow. This large language model provides contextually accurate suggestions, summaries, and insights based on user queries, making the search results more meaningful and relevant.
-- Grafana: A real-time monitoring and visualization tool used to track the performance of the application. It allows developers and administrators to gain insights into system health, query performance, and other important metrics to ensure smooth operations.
-- Docker: Used to containerize the entire application, ensuring consistency across different environments and simplifying deployment. Docker ensures that all services (e.g., Airflow, Elasticsearch, BERT model, Grafana) are isolated, scalable, and easy to manage.
+A useful legal assistant therefore needs to retrieve relevant information quickly while preserving enough context for users to evaluate the retrieved material.
 
-### Retrieval
+---
 
-In the retrieval phase, the Legal Document Assistant utilizes both **PostgreSQL** and **Elasticsearch** to efficiently process and answer user queries by combining structured data storage and high-performance search capabilities.
+## 💡 Solution
 
-1. Dataset Storage and Indexing: Legal documents, case laws, and statutes are stored in a PostgreSQL database. This relational database organizes the dataset, maintaining the structure and integrity of the legal information. PostgreSQL stores detailed metadata, including document types, case names, statutes, and related legal details. To enhance search performance, an index of this dataset is created in Elasticsearch, allowing for faster retrieval of relevant information.
+The Legal Document Assistant uses a **Retrieval-Augmented Generation (RAG) workflow**:
 
-2. Search via Elasticsearch: Once the PostgreSQL dataset is indexed into Elasticsearch, it enables full-text search across the stored documents. When a user submits a query, Elasticsearch performs a fast, scalable search, looking through the indexed documents for matches based on the user's question. Elasticsearch uses advanced ranking algorithms to ensure the most relevant legal documents are returned. The results are filtered and ranked by relevance, offering accurate and contextually appropriate legal information.
+1. Legal datasets are extracted from source files.
+2. Apache Airflow orchestrates the ingestion workflow.
+3. Cleaned data is stored in PostgreSQL.
+4. Relevant document content and metadata are indexed in Elasticsearch.
+5. A user submits a legal question through Streamlit.
+6. Elasticsearch retrieves relevant documents.
+7. Retrieved context is passed to the language-processing component.
+8. The application returns a context-aware response.
+9. Query performance, retrieval quality, and user feedback are exposed through Grafana.
 
-By indexing the dataset from PostgreSQL into Elasticsearch, the retrieval process becomes faster and more efficient, allowing the Legal Document Assistant to quickly access and return the most relevant documents in response to user queries.
+### RAG Architecture
 
-### Retrieval-Augmented Generation (RAG)
-The Legal Document Assistant employs a Retrieval-Augmented Generation (RAG) approach to provide contextually accurate responses based on user queries. This step combines the retrieval power of Elasticsearch with the language generation capabilities of the [google-bert/bert-large-uncased-whole-word-masking-finetuned-squad](https://huggingface.co/google-bert/bert-large-uncased-whole-word-masking-finetuned-squad?context=In+Nasr+v+NRMA+Insurance+%5B2006%5D+NSWSC+1018%2C+the+plaintiff%27s+appeal+was+lodged+out+of+time+because+the+summons+was+filed+on+8+June+2006%2C+seven+months+after+the+decision+of+the+Local+Court+was+made+on+4+October+2005.+No+explanation+was+provided+for+this+delay.&text=In+the+case+of+Nasr+v+NRMA+Insurance+%5B2006%5D+NSWSC+1018%2C+why+was+the+plaintiff%27s+appeal+lodged+out+of+time%3F) from Hugging Face.
+![RAG Flow](./images/llm%20rag%20flow.png)
 
-1. Integration with Google BERT API: To enhance the relevance and quality of the search results, the application leverages the Google BERT (Bidirectional Encoder Representations from Transformers) model via the Hugging Face API. This model enables the system to generate summaries, suggestions, and context-aware insights based on the retrieved legal documents. The BERT model interprets the user’s query and provides responses that are contextually aligned with legal texts.
-2. Hugging Face API Key: In order to use the Google BERT model from Hugging Face, the application requires an API key (HUGGINGFACE_KEY) from the Hugging Face platform. This key provides access to the BERT API and must be securely stored in the environment configuration.
-3. Docker Compose Setup: The HUGGINGFACE_KEY is integrated into the system using Docker Compose. The API key is placed within the Docker Compose environment file, ensuring secure access during runtime. Here’s how the key is added:
+---
+
+## 🏗️ System Architecture
+
+```text
+                    ┌─────────────────────┐
+                    │   Legal Data Files  │
+                    │   CSV / JSON / QA   │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │   Apache Airflow    │
+                    │  ETL / Orchestration│
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │     PostgreSQL      │
+                    │ Storage + Metadata  │
+                    └──────────┬──────────┘
+                               │
+                         Index / Sync
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │    Elasticsearch    │
+                    │ Retrieval / Ranking │
+                    └──────────┬──────────┘
+                               │
+                        Relevant Context
+                               │
+                               ▼
+┌───────────────┐     ┌─────────────────────┐
+│   Streamlit   │────▶│ RAG / QA Component  │
+│   Web App     │     │ Hugging Face Model  │
+└───────┬───────┘     └──────────┬──────────┘
+        │                         │
+        │                         ▼
+        │                 Contextual Answer
+        │
+        ▼
+┌──────────────────────────────────────────┐
+│                  Grafana                 │
+│ Response Time • Feedback • Hit Rate • MRR│
+└──────────────────────────────────────────┘
 ```
+
+---
+
+## 📚 Datasets
+
+The project uses the following publicly available datasets:
+
+1. **Open Australian Legal QA Dataset**  
+   https://www.kaggle.com/datasets/umarbutler/open-australian-legal-qa/data?select=qa.jsonl
+
+2. **Legal Text Classification Dataset**  
+   https://www.kaggle.com/datasets/amohankumar/legal-text-classification-dataset
+
+---
+
+## 🧰 Tech Stack
+
+| Component | Technology | Purpose |
+|---|---|---|
+| Programming Language | Python | Application and data-processing logic |
+| UI | Streamlit | Interactive legal question-answering interface |
+| Orchestration | Apache Airflow | Automated ingestion and indexing workflows |
+| Database | PostgreSQL | Structured storage and document metadata |
+| Search | Elasticsearch | Fast full-text retrieval and ranking |
+| NLP / QA | Hugging Face model | Question answering over retrieved context |
+| Monitoring | Grafana | Metrics, performance, and feedback monitoring |
+| Deployment | Docker / Docker Compose | Reproducible multi-service deployment |
+
+---
+
+## 🔍 Retrieval Pipeline
+
+The retrieval layer combines **PostgreSQL** for structured persistence with **Elasticsearch** for high-performance search.
+
+### 1. Data Storage
+
+Legal documents and associated metadata are stored in PostgreSQL. The database provides structured storage for document information such as document type, case information, and legal metadata.
+
+### 2. Elasticsearch Indexing
+
+Data from PostgreSQL is indexed into Elasticsearch. Elasticsearch provides efficient full-text search and relevance-based ranking over the legal corpus.
+
+### 3. Query Retrieval
+
+When a user submits a question:
+
+```text
+User Question
+     │
+     ▼
+Elasticsearch Search
+     │
+     ▼
+Relevant Legal Documents
+     │
+     ▼
+Ranked Context
+     │
+     ▼
+RAG / QA Component
+     │
+     ▼
+Final Response
+```
+
+---
+
+## 🤖 Retrieval-Augmented Generation / QA
+
+The application combines document retrieval with a Hugging Face question-answering model.
+
+The referenced model is:
+
+**`google-bert/bert-large-uncased-whole-word-masking-finetuned-squad`**
+
+Hugging Face:
+https://huggingface.co/google-bert/bert-large-uncased-whole-word-masking-finetuned-squad
+
+The retrieval stage provides relevant legal context, while the model processes the question together with that context.
+
+### Why Retrieval First?
+
+Retrieval-first processing helps the application:
+
+- Ground responses in the indexed legal corpus
+- Reduce irrelevant context
+- Retrieve relevant case-law passages
+- Separate document search from answer generation
+- Measure retrieval quality independently
+
+---
+
+## 🔐 Configuration & Secrets
+
+Do **not** commit API keys directly to `docker-compose.yml`.
+
+Instead, create a `.env` file:
+
+```env
+HUGGINGFACE_KEY=your_huggingface_token
+```
+
+Then reference the variable from Docker Compose:
+
+```yaml
+services:
   app:
-    build: llm-app/.
+    build: ./llm-app
     container_name: llm_app
     environment:
-      - HUGGINGFACE_KEY=<YOUR_API_KEY>
+      HUGGINGFACE_KEY: ${HUGGINGFACE_KEY}
     volumes:
-      - ./llm-app/:/app
+      - ./llm-app:/app
     networks:
       - network
     depends_on:
@@ -64,102 +225,414 @@ The Legal Document Assistant employs a Retrieval-Augmented Generation (RAG) appr
       - "8501:8501"
 ```
 
-This allows the Legal Document Assistant to seamlessly interact with the Hugging Face API for enhanced document retrieval and generation, ensuring that the output is contextually relevant and precise.
+Add `.env` to `.gitignore`:
 
-### Interface
-
-![streamlit interface](./images/llm.png)
-
-The Legal Document Assistant provides an intuitive and user-friendly interface built using Streamlit. The interface is designed to allow legal professionals to easily interact with the system, submit queries, and provide feedback on the results. Key features of the interface include:
-
-1. Text Input Field: Users can enter their legal questions or queries into the text field. This input is sent to the system, which processes the query through the Retrieval-Augmented Generation (RAG) pipeline to return relevant legal documents and summaries.
-2. Ask Button: After entering a query, users click the Ask button to submit their question. The system then retrieves and generates responses based on the user input, leveraging Elasticsearch for document search and the Google BERT model for contextual generation.
-3. Satisfaction Button: Once the results are displayed, users can provide feedback on the accuracy and relevance of the retrieved documents and generated summaries by clicking the Satisfaction button. This feedback helps monitor the quality of the responses and can be used for system improvement and performance tracking.
-
-The Streamlit interface ensures a smooth and seamless user experience, allowing legal professionals to efficiently query the system and interact with the results.
-
-### Ingestion Pipeline
-
-![airflow](./images/airflow.png)
-
-The data ingestion process involves loading legal documents from CSV and JSON files into PostgreSQL and indexing them into Elasticsearch. This is managed using **Apache Airflow**.
-
-1. Data Extraction
-CSV & JSON: Airflow extracts data from CSV and JSON files, converting it into a suitable format for PostgreSQL.
-2. Data Loading
-PostgreSQL: The extracted data is cleaned, transformed, and loaded into PostgreSQL tables using Airflow.
-3. Data Indexing
-Elasticsearch: Data is exported from PostgreSQL, indexed into Elasticsearch with appropriate mappings for efficient search.
-4. Monitoring
-Airflow monitors the pipeline for performance and errors, ensuring data integrity and prompt issue resolution.
-
-### RAG Evaluation
-
-To evaluate the effectiveness of the Retrieval-Augmented Generation (RAG) approach, we utilize two key metrics: Hit Rate and Mean Reciprocal Rank (MRR). Additionally, the evaluation incorporates scores obtained from Google BERT.
-
-1. Hit Rate: measures the proportion of queries for which the correct answer is found within a predefined number of top results.
-2. Mean Reciprocal Rank (MRR): calculates the average rank at which the first relevant result appears across all queries.
-3. Google BERT Scores: are obtained from the Google BERT model to evaluate the relevance and quality of generated summaries and suggestions.
-
-### Monitoring Dashboard
-
-![grafan](./images/dashboard.png)
-
-To track the performance and usage of the Legal Document Assistant, we utilize a Grafana dashboard that monitors key metrics in real time. The following metrics are visualized to ensure system efficiency and user satisfaction:
-
-1. Total Questions Answered
-  - Metric: The total number of user queries processed by the system.
-  - Purpose: Tracks overall usage and demand for the system.
-2. Total Users Filled Feedback
-  - Metric: The total number of users who provided feedback after receiving an answer.
-  - Purpose: Measures engagement and feedback collection for evaluating user experience.
-3. Satisfaction Rate
-  - Metric: The ratio of satisfied users (users who clicked “satisfied”) to the total number of users who filled feedback.
-  - Purpose: Indicates user satisfaction and helps identify areas for improvement.
-4. Response Time per Created Time (Time Series)
-  - Metric: Tracks the response time of the system for each query over time.
-  - Purpose: Monitors system performance and response efficiency.
-5. LLM Score, Hit Rate, and MRR Score per Time (Time Series)
-  - Metric: Visualizes the LLM-generated score, Hit Rate, and MRR over time for each query.
-  - Purpose: Evaluates the accuracy and effectiveness of the retrieval system and LLM performance over time.
-
-## How to run
-
-1. Get hugging face access token: Obtain a Hugging Face User Access Token by following the instructions on this page: [Hugging Face Security Tokens](https://huggingface.co/docs/hub/en/security-tokens).
-2. Fill in Hugging Face Key: Add your Hugging Face Access Token to the `docker-compose.yml` file under the environment variables section for the service requiring the key.
+```gitignore
+.env
+*.env
 ```
-  app:
-    build: llm-app/.
-    container_name: llm_app
-    environment:
-      - HUGGINGFACE_KEY=<YOUR_API_KEY>
-    volumes:
-      - ./llm-app/:/app
-    networks:
-      - network
-    depends_on:
-      - elasticsearch
-    ports:
-      - "8501:8501"
+
+> Never push Hugging Face tokens, database passwords, or other credentials to GitHub.
+
+---
+
+## 🔄 Data Ingestion Pipeline
+
+Apache Airflow manages the ingestion workflow.
+
+![Airflow Pipeline](./images/airflow.png)
+
+### Pipeline
+
+```text
+CSV / JSON
+    │
+    ▼
+Extract
+    │
+    ▼
+Clean & Transform
+    │
+    ▼
+PostgreSQL
+    │
+    ▼
+Index
+    │
+    ▼
+Elasticsearch
+    │
+    ▼
+Available for Retrieval
 ```
-3. Start Docker Containers: run this command `docker-compose up --build -d`
-4. Wait for Containers to Start: It may take some time for all the containers to fully initialize, especially Airflow. You can check the status by monitoring the logs or using Docker commands.
-5. Access Airflow: 
-  - Once the Airflow webserver is running, you can access it at `localhost:8080`,
-  - Log in using the default credentials (username: `airflow`, password: `airflow`), which are set in the `docker-compose.yml` file
-  - Start the DAG from the Airflow UI. The pipeline will extract data from CSV and JSON files and index it into Elasticsearch. The DAG runs automatically once per day.
-6. Access the Streamlit App
-  - Access the Streamlit app at `localhost:8501`
-  - After asking a question, if you receive a message like `It seems Elastic Search is still running, please refresh again`, wait for Elasticsearch to finish starting, then try again after a few seconds.
-7. Monitoring the App with Grafana
-  - Grafana can be accessed at `localhost:3000`
-  - Import the provided dashboard configuration `llm-app/dashboard.json` to monitor key metrics like response time, user satisfaction, and retrieval performance.
 
-### Questions Example
+### Pipeline Responsibilities
 
-You may used these questions example below to test the app. But, feel free to ask another question:
-1. Why did the plaintiff wait seven months to file an appeal?
-2. What was the outcome of the case?
-3. Can you provide more details on the clarification provided in Note 1?
-4. Can the landlord avoid liability for breaching this obligation if the state of disrepair is caused by the tenant's actions?
-5. What is the Commonwealth Bank of Australia fixed deposit account?
+**Extraction**
+
+Loads legal data from CSV and JSON sources.
+
+**Transformation**
+
+Cleans and prepares records for database storage.
+
+**Loading**
+
+Writes processed records to PostgreSQL.
+
+**Indexing**
+
+Exports the required data from PostgreSQL and indexes it into Elasticsearch.
+
+**Monitoring**
+
+Airflow provides workflow execution and failure monitoring.
+
+---
+
+## 🖥️ Streamlit Interface
+
+![Streamlit Interface](./images/llm.png)
+
+The Streamlit application provides a simple interface for legal research.
+
+### Main Interaction Flow
+
+1. Enter a legal question.
+2. Click **Ask**.
+3. The system retrieves relevant legal information.
+4. The QA/RAG component processes the retrieved context.
+5. The answer is displayed.
+6. Provide satisfaction feedback.
+
+This interface makes the retrieval pipeline accessible without requiring users to interact directly with Elasticsearch, PostgreSQL, or Airflow.
+
+---
+
+## 📊 RAG Evaluation
+
+The retrieval pipeline is evaluated using:
+
+### Hit Rate
+
+Measures whether the relevant answer/document appears within a predefined set of top retrieved results.
+
+```text
+Hit Rate =
+Queries with a relevant result in Top-K
+----------------------------------------
+             Total Queries
+```
+
+### Mean Reciprocal Rank (MRR)
+
+Measures how highly the first relevant result is ranked.
+
+```text
+MRR = Average(1 / Rank of First Relevant Result)
+```
+
+Higher values indicate that relevant results are appearing closer to the top of the retrieval results.
+
+### Model / QA Score
+
+The project also records scores associated with the Hugging Face QA component to help evaluate response relevance and quality.
+
+---
+
+## 📈 Monitoring with Grafana
+
+![Grafana Dashboard](./images/dashboard.png)
+
+Grafana is used to monitor both application usage and retrieval quality.
+
+### Tracked Metrics
+
+| Metric | Purpose |
+|---|---|
+| Total Questions Answered | Measures system usage |
+| Total Feedback Responses | Measures user engagement |
+| Satisfaction Rate | Tracks user-reported satisfaction |
+| Response Time | Monitors application performance |
+| Hit Rate | Measures retrieval success |
+| MRR | Measures ranking quality |
+| Model / LLM Score | Tracks response quality over time |
+
+The dashboard can be used to identify performance degradation, retrieval-quality issues, and changes in user satisfaction.
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Make sure the following are installed:
+
+- Docker
+- Docker Compose
+- A Hugging Face account/token
+
+---
+
+### 1. Clone the Repository
+
+```bash
+git clone <YOUR_REPOSITORY_URL>
+cd <YOUR_REPOSITORY_NAME>
+```
+
+---
+
+### 2. Configure Hugging Face
+
+Create a `.env` file:
+
+```env
+HUGGINGFACE_KEY=your_huggingface_token
+```
+
+Do not commit this file.
+
+---
+
+### 3. Build and Start the Services
+
+```bash
+docker compose up --build -d
+```
+
+For older Docker Compose installations, the following may also be used:
+
+```bash
+docker-compose up --build -d
+```
+
+---
+
+### 4. Check Running Containers
+
+```bash
+docker compose ps
+```
+
+If a service is still starting, inspect its logs:
+
+```bash
+docker compose logs -f
+```
+
+For a specific service:
+
+```bash
+docker compose logs -f app
+```
+
+---
+
+## 🌐 Application URLs
+
+Once the services are running:
+
+| Service | URL |
+|---|---|
+| Streamlit | http://localhost:8501 |
+| Airflow | http://localhost:8080 |
+| Grafana | http://localhost:3000 |
+
+### Airflow
+
+The original project configuration uses:
+
+```text
+Username: airflow
+Password: airflow
+```
+
+Use the credentials configured in your current `docker-compose.yml`.
+
+From the Airflow UI, start the ingestion DAG and verify that the data is loaded and indexed.
+
+### Streamlit
+
+Open:
+
+```text
+http://localhost:8501
+```
+
+If Elasticsearch is still initializing, wait for the service to become healthy and refresh the Streamlit application.
+
+### Grafana
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+Import the provided dashboard configuration:
+
+```text
+llm-app/dashboard.json
+```
+
+---
+
+## 🧪 Example Questions
+
+You can test the application with questions such as:
+
+```text
+Why did the plaintiff wait seven months to file an appeal?
+
+What was the outcome of the case?
+
+Can you provide more details on the clarification provided in Note 1?
+
+Can the landlord avoid liability for breaching this obligation if the state of disrepair is caused by the tenant's actions?
+
+What is the Commonwealth Bank of Australia fixed deposit account?
+```
+
+You can also ask other questions that are supported by the indexed legal corpus.
+
+---
+
+## 🛠️ Troubleshooting
+
+### Elasticsearch is still starting
+
+If the application displays:
+
+```text
+It seems Elastic Search is still running, please refresh again
+```
+
+wait a few seconds and refresh the application.
+
+You can inspect Elasticsearch logs with:
+
+```bash
+docker compose logs -f elasticsearch
+```
+
+### Check all services
+
+```bash
+docker compose ps
+```
+
+### Restart the stack
+
+```bash
+docker compose down
+docker compose up --build -d
+```
+
+### View application logs
+
+```bash
+docker compose logs -f app
+```
+
+### View Airflow logs
+
+```bash
+docker compose logs -f airflow
+```
+
+---
+
+## 🔒 Security Best Practices
+
+Before deploying this project outside a local development environment:
+
+- Store secrets in environment variables or a secret manager.
+- Never commit `.env` files.
+- Rotate exposed API tokens immediately.
+- Change default Airflow credentials.
+- Use strong database credentials.
+- Restrict externally exposed ports.
+- Enable authentication for production services.
+- Validate and sanitize user input.
+- Log application errors without storing sensitive information.
+- Verify legal answers against authoritative sources before relying on them.
+
+---
+
+## 📁 Project Assets
+
+The repository includes supporting visual assets used in this documentation:
+
+```text
+images/
+├── llm rag flow.png
+├── llm.png
+├── airflow.png
+└── dashboard.png
+```
+
+The project also references:
+
+```text
+llm-app/dashboard.json
+```
+
+for the Grafana dashboard configuration.
+
+---
+
+## 🔮 Potential Improvements
+
+The current architecture can be extended with:
+
+- Hybrid lexical + semantic retrieval
+- Vector search and embeddings
+- Cross-encoder reranking
+- Source citations in generated answers
+- Conversation history
+- Document-level access control
+- Better hallucination detection
+- Automated retrieval evaluation
+- Model latency and token-usage tracking
+- More granular legal metadata filtering
+- Production-grade authentication and authorization
+- CI/CD and automated testing
+
+These are suggested future enhancements and are not required by the current implementation.
+
+---
+
+## 📜 Disclaimer
+
+This project is designed for **legal information retrieval and research assistance**. It should not be treated as a substitute for a qualified lawyer, official legal databases, or authoritative legal advice.
+
+Always verify important legal information against the original source documents and applicable law.
+
+---
+
+## ⭐ Project Summary
+
+The Legal Document Assistant demonstrates how a modern data and AI stack can be combined to build an end-to-end legal research workflow:
+
+```text
+Data Ingestion
+      ↓
+Apache Airflow
+      ↓
+PostgreSQL
+      ↓
+Elasticsearch
+      ↓
+Retrieval
+      ↓
+RAG / QA
+      ↓
+Streamlit
+      ↓
+User Feedback
+      ↓
+Grafana Monitoring
+```
+
+The result is a containerized legal research assistant with automated ingestion, scalable retrieval, context-aware question answering, evaluation metrics, and operational monitoring.
